@@ -1,13 +1,11 @@
 # main links
 main:
-  - title: "About"
+  - title: "팀 소개"
     url: /about/
-  - title: "Categories"
+  - title: "카테고리"
     url: /categories/
-  - title: "Tags"
+  - title: "태그"
     url: /tags/
-  - title: "Study Plan"
-    url: /studyplan/  
   # - title: "Sample Posts"
   #   url: /year-archive/
   # - title: "Sample Collections"
