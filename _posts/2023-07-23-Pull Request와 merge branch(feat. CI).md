@@ -72,3 +72,7 @@ Actions 탭에 들어가 성공적으로 빌드와 테스트가 완료된 workfl
 이로써 Pull Request의 숨겨진 내부 메커니즘과 하루스터디의 CI 파이프라인이 이를 어떻게 활용하는지 알아보았습니다.
 
 감사합니다.
+
+## 참고 자료
+<a href = "https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request">Github Actions events that trigger workflows</a> <br>
+<a href = "https://fluffyandflakey.blog/2022/12/21/what-is-a-github-pull-request-merge-branch/#conclusions">What is a GitHub Pull Request merge branch?</a>
