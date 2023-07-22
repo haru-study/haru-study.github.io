@@ -1,6 +1,6 @@
 ---
 title:  "Pull Request와 merge branch(feat. CI)"
-excerpt: "Pull Request의 숨겨진 특성과 CI 환경에서는 이를 어떻게 활용하는지를 알아보았습니다."
+excerpt: "Pull Request의 숨겨진 특성과 하루스터디의 CI 환경에서는 이를 어떻게 활용하는지를 알아보았습니다."
 
 categories:
   - Blog  
