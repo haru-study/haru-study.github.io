@@ -3,7 +3,7 @@ title:  "Pull Request와 merge branch(feat. CI)"
 excerpt: "Pull Request의 숨겨진 특성과 하루스터디의 CI 환경에서는 이를 어떻게 활용하는지를 알아보았습니다."
 
 categories:
-  - Blog  
+  - Github, Backend
 tags:
   - [Pull Request, merge branch]
 
@@ -43,11 +43,11 @@ merge branch는 언제 사용될 수 있을까요? 예상하셨다시피 CI 환�
 
 ## 도식화한다면
 
-<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/assets/78679830/50d534c6-5f3b-48c8-9cdc-a85744e8746d" style="width: 80%; height: 80%"> </div>
+<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/assets/78679830/70e61317-f14d-4709-9c02-938558566911" style="width: 80%; height: 80%"> </div>
 
-그림으로 도식화하면 위와 같습니다. single-commit-pr을 trunk에 merge 하길 원해서 Pull Request를 보냈다고 가정해봅시다. 이 상황에서 앞서 설명드렸다시피 Github는 자동으로 `refs/pull/1/merge` 와 `refs/pull/1/head` 브랜치를 생성합니다.
+그림으로 도식화하면 위와 같습니다. develop 브랜치를 main 브랜치에 병합하기 위해 Pull Request를 보냈다고 가정해봅시다. 이 상황에서 앞서 설명드렸다시피 Github는 자동으로 `refs/pull/1/merge` 와 `refs/pull/1/head` 브랜치를 생성합니다.
 
-그리고 merge branch(`refs/pull/1/merge)` 의 경우에는 보시다시피 가상으로 병합된 커밋(`dde00c3`)을 포함하고 있습니다.
+그리고 merge branch(`refs/pull/1/merge)` 의 경우에는 보시다시피 가상으로 병합된 커밋(`merge preview`)을 포함하고 있습니다.
 
 ## CI 환경에서 실제로 확인해보기
 
