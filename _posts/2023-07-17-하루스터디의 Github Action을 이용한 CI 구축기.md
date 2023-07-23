@@ -59,11 +59,16 @@ Github Action은 github와 잘 통합되어있기 때문에 github와 연동해�
 
 ## CI workflow
 
-하루스터디의 초기 CI workflow는 간단합니다.
+하나의 레포지토리에서 프론트엔드와 백엔드 코드가 관리되기 때문에 workflow를 각각 분리해주었습니다.
+각 분야의 CI workflow는 다음과 같습니다.
+
+<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/blob/main/_posts/img/ci.png"> </div>
+
+위 그림에 해당하는 workflow를 살펴보겠습니다.
 
 ### 트리거
 
-먼저, 하나의 레포지토리에서 프론트엔드와 백엔드 코드가 관리되기 때문에 workflow를 각각 분리해주었고, 트리거는 develop 브랜치에 Pull Request가 발생했을 때, 변경됐을 때, reopened 됐을 때 각 workflow가 수행됩니다.
+트리거는 develop 브랜치에 Pull Request가 발생했을 때, 변경됐을 때, reopened 됐을 때 각 workflow가 수행됩니다.
 그 중에서 기능 추가나 리팩토링에 대해서만 빌드와 테스트를 진행하면 되기 때문에 Pull Request의 라벨 중 BE와 feature 또는 BE와 refactor가 붙어있는 경우 그리고 FE와 feature 또는 FE와 refactor가 붙어있는 경우에만 workflow를 실행하도록 설계했습니다.
 FE와 BE에 대해서는 script를 분리해줬기때문에 CI 실행시 각 분야별 workflow만 실행됩니다.
 
