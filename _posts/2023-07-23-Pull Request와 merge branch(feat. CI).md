@@ -67,6 +67,7 @@ Actions 탭에 들어가 성공적으로 빌드와 테스트가 완료된 workfl
 이 `9e607...` 해시를 가진 커밋이 바로 앞서 설명했던 merge branch 의 최신 커밋입니다. 앞서 설명했듯 가상으로 병합되어 생겨난 커밋이기 때문에, 원격 Repository 어디에서도 이 해시 값을 가진 커밋을 찾을 수는 없습니다. 
 
 Github Actions의 경우, Pull Request 이벤트 트리거가 작동하면 내부적으로 `merge branch의 최신 커밋`을 환경 변수로 저장합니다(`GITHUB_SHA` 라는 값에 저장됩니다). 그리고 이 환경 변수 값을 이용해 위처럼 fetch를 수행하는 것이죠. 
+<div style="text-align:center"> <img src="https://github.com/haru-study/haru-study.github.io/assets/78679830/0cfb51bb-0031-45b0-9e78-3469b7f9262b"> </div>
 
 ## 마치며
 이번 아티클을 통해 CI 환경에서 병합된 상태를 가정하여 빌드와 테스트를 돌리는 것은 마법같은 일이 아니라, Pull Request의 특성을 이용한 결과물임을 확인할 수 있었습니다.
