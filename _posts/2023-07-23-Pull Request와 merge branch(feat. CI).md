@@ -14,10 +14,6 @@ date: 2023-07-23
 last_modified_at: 2023-07-23
 ---
 
-# Pull Request와 merge branch(feat. CI)
-
----
-
 > 이 글은 백엔드 크루 테오가 작성했습니다.
 >
 
@@ -28,6 +24,7 @@ last_modified_at: 2023-07-23
 
 그 해답은 Pull Request에 있습니다. Pull Request는 단순한 `merge 요청` 이라고 생각하기 쉽상이지만, 사실 숨겨진 원리가 존재하기 때문입니다.
 
+그리고 이 숨겨진 원리를 안다면 Pull Request를 활용한 CI 파이프라인을 보다 쉽게 이해할 수 있을 것입니다.
 ## Pull Request가 생성되면 발생하는 일
 
 Pull Ruquest가 생성되면 단순히 Github에서 merge 요청만 발생하는 것이 아닙니다. 사실 Pull Request가 생성되는 순간 **총 두 개의 브랜치**가 생깁니다.
@@ -71,7 +68,10 @@ Actions 탭에 들어가 성공적으로 빌드와 테스트가 완료된 workfl
 
 Github Actions의 경우, Pull Request 이벤트 트리거가 작동하면 내부적으로 `merge branch의 최신 커밋`을 환경 변수로 저장합니다(`GITHUB_SHA` 라는 값에 저장됩니다). 그리고 이 환경 변수 값을 이용해 위처럼 fetch를 수행하는 것이죠. 
 
-즉, `Pull Request가 발생하면 병합된 상태를 가정하여 빌드와 테스트를 수행한다` 라고 결론을 내릴 수 있겠고, 이로써 Pull Request의 숨겨진 내부 메커니즘과 하루스터디의 CI 파이프라인이 이를 어떻게 활용하는지 알아보았습니다.
+## 마치며
+이번 아티클을 통해 CI 환경에서 병합된 상태를 가정하여 빌드와 테스트를 돌리는 것은 마법같은 일이 아니라, Pull Request의 특성을 이용한 결과물임을 확인할 수 있었습니다.
+
+
 
 감사합니다.
 
