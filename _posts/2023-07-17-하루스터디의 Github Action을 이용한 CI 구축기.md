@@ -62,7 +62,7 @@ Github Action은 github와 잘 통합되어있기 때문에 github와 연동해�
 하나의 레포지토리에서 프론트엔드와 백엔드 코드가 관리되기 때문에 workflow를 각각 분리해주었습니다.
 각 분야의 CI workflow는 다음과 같습니다.
 
-<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/blob/main/_posts/img/ci.png"> </div>
+<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/blob/main/_posts/img/ci.png?raw=true"> </div>
 
 위 그림에 해당하는 workflow를 살펴보겠습니다.
 
