@@ -67,9 +67,11 @@ Actions 탭에 들어가 성공적으로 빌드와 테스트가 완료된 workfl
 <div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/assets/78679830/c69559a5-3a71-4a11-b35c-257ae7ae3268"> </div>
 `fetching the repository` 부분에서 `9e607...` 해시를 가진 커밋을 `refs/remotes/pull/116/merge` 라는 이름으로 fetch하는 것을 알 수 있습니다. 
 
-이 `9e607...` 해시를 가진 커밋이 바로 앞서 설명했던 merge branch 의 최신 커밋입니다. 즉, `Pull Request가 발생하면 병합된 상태를 가정하여 빌드와 테스트를 수행한다` 라고 결론을 내릴 수 있겠습니다.
+이 `9e607...` 해시를 가진 커밋이 바로 앞서 설명했던 merge branch 의 최신 커밋입니다. 앞서 설명했듯 가상으로 병합되어 생겨난 커밋이기 때문에, 원격 Repository 어디에서도 이 해시 값을 가진 커밋을 찾을 수는 없습니다. 
 
-이로써 Pull Request의 숨겨진 내부 메커니즘과 하루스터디의 CI 파이프라인이 이를 어떻게 활용하는지 알아보았습니다.
+Github Actions의 경우, Pull Request 이벤트 트리거가 작동하면 내부적으로 `merge branch의 최신 커밋`을 환경 변수로 저장합니다(`GITHUB_SHA` 라는 값에 저장됩니다). 그리고 이 환경 변수 값을 이용해 위처럼 fetch를 수행하는 것이죠. 
+
+즉, `Pull Request가 발생하면 병합된 상태를 가정하여 빌드와 테스트를 수행한다` 라고 결론을 내릴 수 있겠고, 이로써 Pull Request의 숨겨진 내부 메커니즘과 하루스터디의 CI 파이프라인이 이를 어떻게 활용하는지 알아보았습니다.
 
 감사합니다.
 
