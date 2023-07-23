@@ -71,7 +71,7 @@ FE와 BE에 대해서는 script를 분리해줬기때문에 CI 실행시 각 분
 
 job은 빌드와 테스트를 수행하는 하나만 존재하며 순서는 다음과 같습니다.
 
-![job.png](img%2Fjob.png)
+<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/blob/main/_posts/img/job.png?raw=true" style="width:80%"> </div>
 
 build-test라는 하나의 job에서 빨간 색으로 네모 친 부분이 각 step입니다.
 
@@ -92,7 +92,7 @@ build-test라는 하나의 job에서 빨간 색으로 네모 친 부분이 각 s
 
 이렇게 결과를 팀원 모두가 슬랙으로 확인할 수 있도록 했습니다.
 
-![action_slack.png](img%2Faction_slack.png)
+<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/blob/main/_posts/img/action_slack.png?raw=true"> </div>
 
 각 분야별로 작성한 workflow는 다음과 같습니다.
 
@@ -189,7 +189,7 @@ jobs:
 
 다음은 Pull Request창에서 확인할 수 있는 결과입니다.
 
-![pull_request.png](img%2Fpull_request.png)
+<div style="text-align: center"> <img src="https://github.com/haru-study/haru-study.github.io/blob/main/_posts/img/pull_request.png?raw=true" style="width:80%;"> </div>
 
 현재 backend-build-test와 front-end-build-test 두 가지 workflow가 작성되어있습니다.
 해당 PR은 라벨 중 BE,feature 또는 BE,refactor 그리고 FE,feature 또는 FE,refactor가 붙어있지 않기 때문에 workflow가 Skipped되어 체크가 패스된 것을 확인할 수 있습니다.
