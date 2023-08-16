@@ -1,5 +1,5 @@
 ---
-title:  "하루스터디의 Jenkins를 이용한 CD 구축기"
+title: "하루스터디의 Jenkins를 이용한 CD 구축기"
 excerpt: "하루스터디 CD 구축 배경과 Jenkins 선택 과정, 그리고 어떻게 CD를 구축했는지에 대해서 알아보겠습니다."
 
 categories:
@@ -15,7 +15,6 @@ last_modified_at: 2023-07-25
 ---
 
 > 이 글은 백엔드 크루 마코와 프론트엔드 크루 엽토가 작성했습니다.
->
 
 ## 들어가며
 
@@ -37,7 +36,7 @@ last_modified_at: 2023-07-25
 ### 배포를 하기 위해 프론트엔드에서 벌어지는 일
 
 1. 최신 커밋이 반영된 github repository의 소스 코드를 클론합니다.
-2. yarn build로  빌드합니다.
+2. yarn build로 빌드합니다. (이 단계에서 package.json에 yarn build 스크립트를 yarn test까지 추가해주어 test가 통과하지 않을 시 빌드파일를 생성하지 않도록 했습니다.)
 3. 빌드한 파일을 nginx의 html 경로로 이동시킵니다.
 
 새로운 기능이 개발될 때 마다 배포 서버에 직접 ssh 접속을 해서 위 과정을 모두 수행하는 것은 매우 귀찮은 일이었습니다. 또한, 배포 서버의 ssh 포트인 22번은 우테코 캠퍼스 내의 ip에서만 열려있기 때문에 집이나 외부에서 급하게 배포를 해야하는 경우가 생기면 캠퍼스에 나와서 직접 배포를 해야합니다.
@@ -80,6 +79,8 @@ jenkins 서버에서는 빌드만 수행해서 배포 서버로 전달(delivery)
 
 jenkins의 파이프라인 스크립트를 먼저 보고, jenkins 파이프라인을 생성해보겠습니다.
 
+백엔드 파이프라인은 다음과 같습니다.
+
 ```groovy
 pipeline {
     agent any
@@ -119,12 +120,54 @@ pipeline {
 
 ```
 
-git clone stage와 build stage는 스크립트만 보고 이해하실수 있을거라고 생각합니다. 시작 부분의 java version 설정과 publish over ssh stage에서 빌드된 파일을 배포 서버로 전송하고, 배포 스크립트를 실행시키는 과정을 알아보겠습니다.
+프론트엔드 파이프라인은 다음과 같습니다.
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('github') {
+            steps {
+                git branch: 'develop', credentialsId: 'repo-and-hook-access-token-username-and-password', url: 'https://github.com/woowacourse-teams/2023-haru-study/'
+            }
+        }
+        stage('test & build') {
+            steps {
+                dir('frontend') {
+                    nodejs('NodeJS 18.16.0') {
+                        sh 'yarn && yarn build'
+                        sh 'yarn build-storybook'
+                    }
+                }
+            }
+        }
+        stage('deploy') {
+            steps {
+                dir('frontend') {
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'haru-study-prod', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/2023-haru-study/html', remoteDirectorySDF: false, removePrefix: 'dist', sourceFiles: 'dist/*')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                }
+            }
+        }
+        stage('storybook-deploy') {
+            steps {
+                dir('frontend') {
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'haru-study-prod', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/2023-haru-study/storybook', remoteDirectorySDF: false, removePrefix: 'storybook-static', sourceFiles: 'storybook-static/**/*')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                }
+            }
+        }
+    }
+}
+
+```
+
+git clone stage와 build stage는 스크립트만 보고 이해하실수 있을거라고 생각합니다.
+
+각 파이프라인에서 java version 설정과 node.js version 설정을 알아보고, publish over ssh stage에서 빌드된 파일을 배포 서버로 전송하고, 배포 스크립트를 실행시키는 과정을 알아보겠습니다.
 
 publish over ssh stage의 스크립트는 뒤에서 jenkins를 통해 생성할 것이니 일단 넘어가시면 됩니다.
 
 ### 파이프라인 생성하기
-
 
 <img src="https://github.com/haru-study/haru-study.github.io/assets/35948985/68f1293e-ff27-4f07-96c2-c5b8fe1a51f0">
 
@@ -144,7 +187,7 @@ clone할 github repository의 url을 입력합니다.
 
 ### tools을 이용한 java version 설정
 
-저희 프로젝트는 java 17 버전을 사용하기로 했습니다. 이에 맞게 빌드 환경을 java 17로 구성해보겠습니다.
+백엔드는 java 17 버전을 사용하기로 했습니다. 이에 맞게 빌드 환경을 java 17로 구성해보겠습니다.
 
 <img src="https://github.com/haru-study/haru-study.github.io/assets/35948985/9f2daba5-37ba-4f96-95df-c4d47c13270d">
 
@@ -164,9 +207,46 @@ https://github.com/corretto/corretto-17/releases/tag/17.0.7.7.1 서버의 아키
 
 https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html 아마존 공식 홈페이지의 다운로드 링크에서는 latest이기 때문에 버전이 업그레이드되면 문제가 발생할 수 있어 직접 버전을 명시했습니다.
 
+### Node.js Plugin & tools를 이용한 Node.js version 설정
+
+프론트엔드는 node 18.16.0 버전을 사용하기로 했습니다. 이에 맞게 버전 설정을 해보겠습니다.
+
+먼저 node.js plugin을 설치해야 젠킨스 서버에 node.js를 설치하고 사용할 수 있습니다. node.js plugin 설치부터 알아보겠습니다.
+
+<img src="https://user-images.githubusercontent.com/78894403/259620597-94526d7f-d644-4b1f-af43-aad5b674c615.png">
+
+Jenkins 관리 > plugins로 이동합니다.
+
+<img src="https://user-images.githubusercontent.com/78894403/259620480-b84805c6-5921-404b-a8c4-dae7555773a0.png">
+
+좌측 Available plugins 탭을 클릭하여 검색 창에 `Node`를 입력하고 NodeJS를 체크하여 `Download now and install after restart` 버튼을 클릭하여 설치해줍니다. 이제 버전 설정을 알아보겠습니다.
+
+<img src="https://github.com/haru-study/haru-study.github.io/assets/35948985/9f2daba5-37ba-4f96-95df-c4d47c13270d">
+
+다시 Jenkins 관리로 돌아와 Tools를 선택합니다.
+
+<img src="https://user-images.githubusercontent.com/78894403/260882005-558be314-04e8-453b-94d3-4630ad460763.png">
+
+스크롤을 내려 NodeJS 설정에서 설치할 버전 및 패키지 메니저 설정을 해주고 save 버튼을 클릭합니다.
+
+```groovy
+stage('test & build') {
+            steps {
+                dir('frontend') {
+                    nodejs('NodeJS 18.16.0') {
+                        sh 'yarn && yarn build'
+                        sh 'yarn build-storybook'
+                    }
+                }
+            }
+        }
+```
+
+젠킨스 스크립트에 `nodejs('NodeJS 18.16.0)`를 명시해주면 젠킨스 서버에 우리가 설정한 버전과 패키지 매니저가 설치되므로 이제 Node 환경에서 빌드 및 테스트를 진행할 수 있습니다.
+
 ### publish over ssh로 빌드한 파일 배포 서버에 전송 및 배포 스크립트 실행하기
 
-jenkins는 다양한 기능을 플러그인을 통해 제공합니다.
+위에서 plugin을 이용해 node.js 버전을 설정할 수 있었던 것처럼, jenkins는 다양한 기능을 플러그인을 통해 제공합니다.
 
 <img src="https://github.com/haru-study/haru-study.github.io/assets/35948985/d074ab33-62cb-47be-b6d4-273d4f20d804">
 
@@ -201,6 +281,7 @@ Key에 ssh접속에 필요한 key 파일을 텍스트 형태로 넣습니다.
 <img src="https://github.com/haru-study/haru-study.github.io/assets/35948985/ad5de5d7-26b2-44d7-9f9c-bbbda7a177ef">
 
 아까 등록했던 SSH Server를 선택합니다.
+
 - Source files : 배포 서버로 전송할 파일입니다.
 - Remove prefix : Source files에 설정한 경로에서 build/libs가 prefix로 붙기 때문에 remove 해줍니다.
 - Remote directory : 배포 서버에서 어느 경로에 빌드된 파일을 전송할지 정합니다.
@@ -216,7 +297,7 @@ github repository에서 특정 브랜치에 merge가 될 때 webhook을 트리�
 하지만 저희는 그 과정까지는 자동화할 필요성을 느끼지 못하고 배포를 하면 각 stage가 잘 동작했는지 jenkins에서 바로 확인할 것이기 때문에 직접 손으로 스크립트를 실행하도록 했습니다.
 위 사진에서 좌측의 `지금 빌드`를 클릭하면 스크립트가 실행됩니다.
 
-저는 맨 앞에 Declearative Checkout SCM stage가 추가로 있습니다.
+저희는 맨 앞에 Declearative Checkout SCM stage가 추가로 있습니다.
 
 ### SCM에서 pipeline script 가져오기
 
@@ -234,8 +315,6 @@ github repository에서 특정 브랜치에 merge가 될 때 webhook을 트리�
 
 하루스터디 CD 구축 배경과 Jenkins 선택 과정, 그리고 어떻게 CD를 구축했는지에 대해서 알아보았습니다.
 저희 팀은 자동화된 CD를 구축함으로써 배포를 하는데 필요한 과정을 버튼 한번으로 간편하게 배포하고 다시 개발에 집중할 수 있었습니다.
-
-
 
 참고 문서
 
